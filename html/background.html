@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<script type="text/javascript" src="/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="/js/options.js"></script>
+  <script type="text/javascript" src="/js/assert.js"></script>
+<script type="text/javascript">
+function unit_test() {
+  if (assert && assert.DEBUG) {
+    window.open('chrome-extension://' + location.host + '/test/index.html');
+  }
+}
+
+var options = Options.load();
+var GQL_HISTORY_LIMIT = 20;
+
+chrome.extension.onRequest.addListener(function(message, sender, sendResponse){
+	console.debug(message);
+	if (message.id === 'getApp') {
+		sendResponse(options.getApp(message.appId));
+	} else if (message.id === 'toggleStar') {
+		var app = options.getApp(message.appId);
+		app.star = !app.star;
+		options.save();
+	} else if (message.id === 'gqlHistoryStarUpdate') {
+		var app = options.getApp(message.appId);
+		app.gqlHistory = message.gqlHistory;
+		options.save();
+	} else if (message.id === 'addGql') {
+		var app = options.getApp(message.appId);
+		app.gqlHistory = addHistory(app.gqlHistory, message.gql, GQL_HISTORY_LIMIT); // {appId:'', namespace:'', gql:'', star:false}
+		options.save();
+	} else if (message.id === 'saveSchema') {
+		var app = options.getApp(message.appId);
+		var hash = {};
+		app.schemaList.forEach(function (e, i) {
+			hash[e.kind] = i;
+		});
+		if (hash[message.schema.kind] == null) {
+			app.schemaList.push(message.schema);
+		} else {
+			app.schemaList[hash[message.schema.kind]] = message.schema;
+		}
+		options.save();
+	}
+});
+
+function addHistory(list, gql, limit) {
+	list.unshift(gql); // {gql:'', namespace:'', star:false }
+
+	var delHistoryCount = list.length - limit;
+	if (delHistoryCount > 0) {
+		var delList = [];
+		// 昇順で古いのをスキップして再度listを作り直す
+		list = $.map(list.reverse(), function (e, i) {
+			if (!e.star && delHistoryCount > delList.length && !(gql === e)) {
+				delList.push(e);
+				return null;
+			}
+	  	return e;
+		});
+		console.log(delList);
+		list.reverse(); // 降順にする
+	}
+	return list;
+}
+</script>
+</head>
+<body>
+</body>
+</html>

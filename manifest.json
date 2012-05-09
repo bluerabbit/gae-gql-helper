@@ -1,0 +1,21 @@
+{
+  "name":"GAE GQL Helper",
+  "description":"Google App EngineにてDataViewerで実行したGQLの実行履歴をローカルストレージに保存し再実行できるようにしたり、GQLを自動生成したり出来るようになります",
+  "version":"0.3.0.0",
+  "background_page":"html/background.html",
+  "content_scripts":[
+    {
+      "js":[ "js/jquery-1.7.1.min.js", "js/content_scripts_create.js" ],
+      "matches":[ "https://appengine.google.com/datastore/create?*", "https://appengine.google.com/datastore/edit?*" ]
+    },
+    {
+      "js":[ "js/jquery-1.7.1.min.js", "js/handlebars-1.0.0.beta.6.js", "js/content_scripts_explorer.js" ],
+      "matches":[ "https://appengine.google.com/datastore/explorer?*" ]
+    }
+  ],
+  "icons":{
+    "48":"images/icon.png"
+  },
+  "permissions":[
+  ]
+}

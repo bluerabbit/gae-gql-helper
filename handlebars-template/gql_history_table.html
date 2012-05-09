@@ -1,0 +1,24 @@
+<div id="handlebars-template">
+  <span style="padding: 10px;"><img id="all_star_toggle" src="{{star_src app_star}}" style="cursor: pointer;"/></span>
+
+  <div style="overflow: auto; width: 618px; height: 160px;">
+    <table id="gqlHistoryTable" border="1" cellspacing="0" width="600"
+           style="border-collapse: separate;border-width: 1px;empty-cells: show; border:solid; border-width: 1px; font-family: Arial, sans-serif; font-size: 11px; table-layout: fixed;">
+      <tbody>
+      {{#each gqlHistorys}}
+      <tr>
+        <td style="{{td_style each_index}}; width:35px;">
+          <div><img src="{{star_src star}}" index="{{each_index}}" style="cursor: pointer;"/></div>
+        </td>
+        <td class="gql-history-text" data-namespace="{{namespace}}" style="{{td_style each_index}};">
+          <span>{{gql}}</span>
+        </td>
+        <td style="{{td_style each_index}}; width:100px;">
+          <span>{{namespace}}</span>
+        </td>
+      </tr>
+      {{/each}}
+      </tbody>
+    </table>
+  </div>
+</div>
